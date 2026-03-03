@@ -1,0 +1,216 @@
+import { useState, useRef, useEffect } from 'react';
+import { Send, Sparkles, ChevronDown, BookOpen, Quote } from 'lucide-react';
+import axios from 'axios';
+import { useAuth } from '@clerk/clerk-react';
+import { SharedContentModal } from '../components/SharedContentModal';
+
+interface Message {
+    role: 'user' | 'assistant';
+    content: string;
+    citedNotes?: any[];
+}
+
+const MODELS = [
+    { id: 'llama-3.1-8b', name: 'Llama 3.1 8B', description: 'Fast and efficient' },
+    { id: 'llama-3.1-70b', name: 'Llama 3.1 70B', description: 'Powerful reasoning' },
+    { id: 'mixtral-8x7b', name: 'Mixtral 8x7B', description: 'Balanced performance' }
+];
+
+export function AIAssistantPage() {
+    const { getToken } = useAuth();
+    const [messages, setMessages] = useState<Message[]>([
+        { role: 'assistant', content: "Hello! I'm your Second Brain AI. Ask me anything about your notes!" }
+    ]);
+    const [input, setInput] = useState('');
+    const [isSending, setIsSending] = useState(false);
+    const [conversationId, setConversationId] = useState<string | null>(null);
+    const [selectedModel, setSelectedModel] = useState(MODELS[0]);
+    const [isModelMenuOpen, setIsModelMenuOpen] = useState(false);
+    const [selectedCitedNote, setSelectedCitedNote] = useState<any | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
+    const handleSendMessage = async () => {
+        if (!input.trim() || isSending) return;
+
+        const userQuery = input;
+        setInput('');
+        setIsSending(true);
+
+        // Optimistic UI update
+        const newUserMessage: Message = { role: 'user', content: userQuery };
+        setMessages(prev => [...prev, newUserMessage]);
+
+        try {
+            const token = await getToken();
+            const response = await axios.post('http://localhost:3000/api/v1/chat/chat-with-notes', {
+                query: userQuery,
+                conversationId: conversationId
+            }, {
+                headers: { "authorization": `Bearer ${token}` }
+            });
+            console.log("conversationId")
+
+            if (response.data.success) {
+                const assistantMessage: Message = {
+                    role: 'assistant',
+                    content: response.data.answer,
+                    citedNotes: response.data.citedNotes
+                };
+                setMessages(prev => [...prev, assistantMessage]);
+                setConversationId(response.data.conversationId);
+            }
+        } catch (error) {
+            console.error("Failed to send message:", error);
+            setMessages(prev => [...prev, { role: 'assistant', content: "Sorry, I encountered an error processing your request." }]);
+        } finally {
+            setIsSending(false);
+        }
+    };
+
+    return (
+        <div className="flex flex-col h-[calc(100vh-64px)] p-4 sm:p-6 max-w-4xl mx-auto w-full">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center border border-border shadow-sm">
+                        <Sparkles className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                        <h1 className="text-xl sm:text-2xl font-bold text-foreground">AI Assistant</h1>
+                        <p className="text-muted-foreground text-xs sm:text-sm">Ask about your notes and ideas.</p>
+                    </div>
+                </div>
+
+                {/* Model Selector */}
+                <div className="relative">
+                    <button
+                        onClick={() => setIsModelMenuOpen(!isModelMenuOpen)}
+                        className="flex items-center gap-2 px-3 py-2 rounded-xl bg-card border border-border hover:bg-muted transition-colors text-sm font-medium shadow-sm"
+                    >
+                        <span className="hidden sm:inline text-muted-foreground mr-1">Model:</span>
+                        {selectedModel.name}
+                        <ChevronDown size={14} className={`transition-transform duration-200 ${isModelMenuOpen ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    {isModelMenuOpen && (
+                        <>
+                            <div className="fixed inset-0 z-40" onClick={() => setIsModelMenuOpen(false)} />
+                            <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-card border border-border shadow-2xl z-50 overflow-hidden p-1 flex flex-col gap-1 anim-fade-in-up">
+                                {MODELS.map(model => (
+                                    <button
+                                        key={model.id}
+                                        onClick={() => {
+                                            setSelectedModel(model);
+                                            setIsModelMenuOpen(false);
+                                        }}
+                                        className={`flex flex-col gap-0.5 p-3 rounded-xl text-left transition-all ${selectedModel.id === model.id ? 'bg-primary/10 border-primary/20' : 'hover:bg-muted'}`}
+                                    >
+                                        <span className={`text-sm font-bold ${selectedModel.id === model.id ? 'text-primary' : 'text-foreground'}`}>
+                                            {model.name}
+                                        </span>
+                                        <span className="text-[10px] text-muted-foreground">{model.description}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </>
+                    )}
+                </div>
+            </div>
+
+            {/* Chat Messages */}
+            <div className="flex-1 bg-card rounded-3xl border border-border shadow-sm p-4 sm:p-6 overflow-y-auto mb-6 space-y-6 custom-scrollbar scroll-smooth">
+                {messages.map((msg, idx) => (
+                    <div key={idx} className={`flex gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                        <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-[10px] font-bold shadow-sm ${msg.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted border border-border text-muted-foreground'}`}>
+                            {msg.role === 'user' ? 'ME' : 'AI'}
+                        </div>
+                        <div className="space-y-4 max-w-[85%]">
+                            <div className={`p-4 rounded-2xl text-sm leading-relaxed shadow-sm ${msg.role === 'user' ? 'bg-primary text-primary-foreground rounded-tr-sm' : 'bg-secondary text-secondary-foreground rounded-tl-sm border border-border'}`}>
+                                {msg.content}
+                            </div>
+
+                            {/* Cited Sources */}
+                            {msg.role === 'assistant' && msg.citedNotes && msg.citedNotes.length > 0 && (
+                                <div className="flex flex-wrap gap-2 pt-1 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                                    <div className="w-full flex items-center gap-2 mb-1 px-1">
+                                        <Quote size={12} className="text-primary/50" />
+                                        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">Sources</span>
+                                    </div>
+                                    {msg.citedNotes.map((note, nIdx) => (
+                                        <button
+                                            key={nIdx}
+                                            onClick={() => {
+                                                setSelectedCitedNote(note);
+                                                setIsModalOpen(true);
+                                            }}
+                                            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-card border border-border hover:border-primary/30 hover:shadow-md transition-all text-left max-w-[200px] group"
+                                        >
+                                            <BookOpen size={14} className="text-primary group-hover:scale-110 transition-transform" />
+                                            <span className="text-xs font-medium text-foreground truncate">{note.title}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                ))}
+                {isSending && (
+                    <div className="flex gap-4 animate-pulse">
+                        <div className="w-8 h-8 rounded-full bg-muted border border-border" />
+                        <div className="bg-secondary/50 p-4 rounded-2xl rounded-tl-sm border border-border w-1/2 h-12" />
+                    </div>
+                )}
+                <div ref={messagesEndRef} />
+            </div>
+
+            {/* Input Area */}
+            <div className="relative group">
+                <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                    placeholder="Ask your second brain..."
+                    className="w-full pl-5 pr-32 py-4 rounded-2xl bg-card border border-border text-foreground shadow-lg shadow-black/[0.03] focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-muted-foreground/60"
+                />
+
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                    {input.trim() && (
+                        <div className="text-[10px] font-bold text-muted-foreground/50 mr-2 hidden sm:block uppercase tracking-tighter">
+                            Press Enter
+                        </div>
+                    )}
+                    <button
+                        onClick={handleSendMessage}
+                        disabled={!input.trim() || isSending}
+                        className={`p-2.5 rounded-xl transition-all flex items-center justify-center ${!input.trim() || isSending
+                                ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                                : 'bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 active:scale-95 shadow-lg shadow-primary/20'
+                            }`}
+                    >
+                        <Send size={18} className={isSending ? 'animate-pulse' : ''} />
+                    </button>
+                </div>
+            </div>
+
+            {/* Cited Note Modal */}
+            <SharedContentModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                content={selectedCitedNote}
+                canFork={false}
+                shareToken={undefined}
+            />
+        </div>
+    );
+}
