@@ -249,7 +249,7 @@ export function Home() {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                        className="block w-full pl-11 pr-32 py-3 bg-white/70 backdrop-blur-xl border border-gray-200/50 rounded-2xl shadow-sm transition-all focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 text-base placeholder:text-muted-foreground/70"
+                        className="block w-full pl-11 pr-32 py-3 bg-card/70 backdrop-blur-xl border border-border/50 rounded-2xl shadow-sm transition-all focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/50 text-base placeholder:text-muted-foreground/70"
                         placeholder="Search your brain..."
                     />
                     <div className="absolute inset-y-0 right-0 pr-2 flex items-center gap-2">

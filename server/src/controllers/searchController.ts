@@ -52,7 +52,7 @@ const notesContext: NoteContext[] = contents.map((note: any, index: number) => (
 
         const rankedResults = await getGroqRankedResults(query, notesContext);
         const contentMap = new Map(contents.map((c, index) => [index, c]))
-        console.log(rankedResults);
+        // console.log(rankedResults);
         const sortedContent = rankedResults.results
             .map(result => {
                 const content = contentMap.get(result.s_no);

@@ -32,17 +32,23 @@ export const chatWithNotes = async (req: Request, res: Response): Promise<void> 
                     messages: [
                         { 
                             role: "system", 
-                            content: `You are a query rewriter. Analyze the chat history and the latest user query.
-                            Determine if the query needs to be rewritten into a standalone search string to be understood without history.
-                            
-                            Return ONLY a valid JSON object:
-                            { 
-                              "requires_rewrite": boolean, 
-                              "rewritten_query": "string" 
-                            }
-                            
-                            Set "requires_rewrite" to true ONLY if the query references previous context (e.g., "tell me more about that", "what about the first one?").
-                            If the query is already standalone, set "requires_rewrite" to false.` 
+                            content: `
+                                You are an expert search-query rewriter. Analyze the chat history and the latest user query.
+                                Your goal is to formulate a precise, standalone search query optimized for a semantic database.
+                                
+                                RULES:
+                                1. Resolve pronouns and contextual references (e.g., if history discusses "React" and the user asks "how do I install it?", rewrite as "how to install React").
+                                2. Strip away all conversational filler, greetings, or pleasantries (e.g., "Thanks! Now tell me about X" -> "X").
+                                3. If the user's query is completely unrelated to the history and already self-contained, just return the core search concepts.
+                                
+                                Return ONLY a valid JSON object:
+                                { 
+                                "requires_rewrite": boolean, 
+                                "rewritten_query": "string" 
+                                }
+                                
+                                Set "requires_rewrite" to true if you modified the original query in ANY way. If it is already a perfect, fluff-free search query, set it to false and mirror the query in "rewritten_query".
+                            `
                         },
                         { role: "user", content: `History:\n${chatHistory}\n\nQuery: ${query}` }
                     ],
@@ -77,7 +83,7 @@ export const chatWithNotes = async (req: Request, res: Response): Promise<void> 
         }));
 
         const rankResponse = await getGroqRankedResults(searchIntent, notesContext);
-        console.log(rankResponse);
+        // console.log(rankResponse);
         if (rankResponse.is_related === false || rankResponse.results.length === 0) {
             const negations = [
                 "I couldn't find any notes related to your query.",
@@ -130,11 +136,19 @@ export const chatWithNotes = async (req: Request, res: Response): Promise<void> 
         }));
 
         const genSystemPrompt = `
-            You are a helpful assistant. Answer the user's query using ONLY the provided notes.
-            If the answer isn't in the notes, say you don't know based on the provided files.
+            You are a strict, grounded AI assistant. You answer user queries based STRICTLY and EXCLUSIVELY on the provided "Context Notes".
+
+            CRITICAL RULES:
+            1. NO EXTERNAL KNOWLEDGE: If the provided notes do not contain the specific facts needed to answer the query, you MUST state: "I cannot answer this based on your provided notes." Do not attempt to guess or use outside knowledge.
+            2. CITATIONS: You must justify your answer by citing the "s_no" of the exact notes you extracted facts from.
+            3. NO HALLUCINATED CITATIONS: Only cite an "s_no" if you actively used its content. If you cannot answer the query, the "cited_s_no" array MUST be empty.
+
+            OUTPUT FORMAT:
             Return ONLY a valid JSON object matching this schema:
-            { "answer": string, "cited_s_no": number[] }
-            The "cited_s_no" should be the s_no of the notes used to generate parts of the answer.
+            { 
+            "answer": "string", 
+            "cited_s_no": number[] 
+            }
         `;
 
         const genCompletion = await groq.chat.completions.create({
@@ -200,3 +214,61 @@ export const chatWithNotes = async (req: Request, res: Response): Promise<void> 
         res.status(500).json({ success: false, msg: "Internal server error" });
     }
 };
+
+export const getChatHistory = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const userId = (req as any).userId;
+        // Find all conversations, sort oldest first to calculate the stable indexes, then reverse?
+        // Or just fetch all, sorted ascending by createdAt.
+        const conversations = await Conversation.find({ userId })
+            .select('_id updatedAt createdAt messages')
+            .sort({ createdAt: 1 }); // Oldest first (1, 2, 3...)
+
+        const history = conversations.map((c, index) => {
+            const firstMessage = c.messages?.[0]?.content || 'Empty Conversation';
+            return {
+                id: c._id,
+                title: `Conversation #${index + 1}`,
+                updatedAt: c.updatedAt,
+                preview: firstMessage.substring(0, 50) + (firstMessage.length > 50 ? '...' : '')
+            };
+        }).reverse(); // Reverse so newest is at the top of the UI
+
+        res.status(200).json({ success: true, history });
+    } catch (error) {
+        console.error("Error fetching chat history:", error);
+        res.status(500).json({ success: false, msg: "Failed to fetch chat history" });
+    }
+};
+
+export const getConversation = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const userId = (req as any).userId;
+        const conversationId = req.params.id;
+
+        if (!conversationId) {
+            res.status(400).json({ success: false, msg: "Conversation ID is required" });
+            return;
+        }
+
+        const conversation = await Conversation.findOne({ _id: conversationId, userId }).populate({
+            path: 'messages.citedNotes',
+            model: 'Content',
+            populate: {
+                path: 'tags',
+                model: 'Tag'
+            }
+        });
+
+        if (!conversation) {
+            res.status(404).json({ success: false, msg: "Conversation not found" });
+            return;
+        }
+
+        res.status(200).json({ success: true, conversation });
+    } catch (error) {
+        console.error("Error fetching conversation:", error);
+        res.status(500).json({ success: false, msg: "Failed to fetch conversation" });
+    }
+};
+

@@ -1,9 +1,7 @@
-import { useState } from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
     Library,
-    Share2,
     Tags,
     Settings,
     ChevronLeft,
@@ -30,8 +28,8 @@ const NavItem = ({ icon: Icon, label, to, isCollapsed }: NavItemProps) => (
         className={({ isActive }) => cn(
             "flex items-center w-full p-3 rounded-xl transition-all group relative border border-transparent overflow-hidden",
             isActive
-                ? "bg-gradient-to-r from-blue-50 to-transparent text-primary font-semibold shadow-sm border-l-4 border-l-primary border-y-transparent border-r-transparent rounded-l-sm"
-                : "text-muted-foreground hover:bg-white/50 hover:text-foreground hover:shadow-sm hover:border-gray-100",
+                ? "bg-gradient-to-r from-primary/10 to-transparent text-primary font-semibold shadow-sm border-l-4 border-l-primary border-y-transparent border-r-transparent rounded-l-sm"
+                : "text-muted-foreground hover:bg-muted/50 hover:text-foreground hover:shadow-sm hover:border-border/50",
             isCollapsed ? "justify-center" : "justify-start gap-3"
         )}
         title={isCollapsed ? label : undefined}
@@ -45,7 +43,7 @@ const NavItem = ({ icon: Icon, label, to, isCollapsed }: NavItemProps) => (
                     </span>
                 )}
                 {isCollapsed && (
-                    <div className="absolute left-full ml-3 px-3 py-1.5 bg-white/90 backdrop-blur-md text-foreground text-xs font-medium rounded-lg border border-gray-200/50 opacity-0 group-hover:opacity-100 transition-all z-50 whitespace-nowrap pointer-events-none shadow-xl translate-x-2 group-hover:translate-x-0">
+                    <div className="absolute left-full ml-3 px-3 py-1.5 bg-popover/90 backdrop-blur-md text-popover-foreground text-xs font-medium rounded-lg border border-border/50 opacity-0 group-hover:opacity-100 transition-all z-50 whitespace-nowrap pointer-events-none shadow-xl translate-x-2 group-hover:translate-x-0">
                         {label}
                     </div>
                 )}
@@ -54,9 +52,12 @@ const NavItem = ({ icon: Icon, label, to, isCollapsed }: NavItemProps) => (
     </NavLink>
 );
 
-export function Sidebar() {
-    const [isCollapsed, setIsCollapsed] = useState(false);
+interface SidebarProps {
+    isCollapsed: boolean;
+    setIsCollapsed: (value: boolean | ((prev: boolean) => boolean)) => void;
+}
 
+export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
     // Mapped to specific routes
     const navItems = [
         { icon: Library, label: 'All Notes', to: '/' },
@@ -67,7 +68,10 @@ export function Sidebar() {
 
     return (
         <motion.aside
-            className="h-screen bg-white/80 backdrop-blur-xl border-r border-gray-200/50 fixed left-0 top-0 z-40 flex flex-col shadow-sm"
+            className={cn(
+                "h-screen bg-card/80 backdrop-blur-xl border-r border-border/50 fixed left-0 top-0 z-40 flex flex-col shadow-sm transition-[width] duration-300",
+                isCollapsed ? "w-[80px]" : "w-[80px] md:w-[260px]"
+            )}
         >
             {/* Header */}
             <div className={cn("flex items-center p-6 h-[88px]", isCollapsed ? "justify-center" : "justify-between")}>
@@ -101,7 +105,7 @@ export function Sidebar() {
             <div className="p-4 border-t border-border/50">
                 <button
                     onClick={() => setIsCollapsed(!isCollapsed)}
-                    className="w-full flex items-center justify-center p-2 rounded-xl text-muted-foreground hover:bg-white/50 hover:text-foreground transition-all border border-transparent hover:border-gray-200"
+                    className="w-full flex items-center justify-center p-2 rounded-xl text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-all border border-transparent hover:border-border/50"
                 >
                     {isCollapsed ? <ChevronRight size={20} /> : <div className="flex items-center gap-2"><ChevronLeft size={20} /> <span className="text-sm font-medium">Collapse</span></div>}
                 </button>
