@@ -77,6 +77,47 @@ export const chatWithNotes = async (req: Request, res: Response): Promise<void> 
         }));
 
         const rankResponse = await getGroqRankedResults(searchIntent, notesContext);
+        console.log(rankResponse);
+        if (rankResponse.is_related === false || rankResponse.results.length === 0) {
+            const negations = [
+                "I couldn't find any notes related to your query.",
+                "It looks like you haven't saved any notes about this topic yet.",
+                "I searched through your brain but couldn't find anything matching this.",
+                "No related notes found. Perhaps try adding some content on this?",
+                "I don't have enough context from your stored notes to answer this."
+            ];
+            const fallbackAnswer = negations[Math.floor(Math.random() * negations.length)];
+
+            if (!conversation) {
+                conversation = new Conversation({
+                    userId,
+                    messages: []
+                });
+            }
+
+            conversation.messages.push({
+                role: "user",
+                content: query,
+                searchIntent: searchIntent
+            } as any);
+
+            conversation.messages.push({
+                role: "assistant",
+                content: fallbackAnswer,
+                citedNotes: []
+            } as any);
+
+            await conversation.save();
+
+            res.status(200).json({
+                success: true,
+                conversationId: conversation._id,
+                answer: fallbackAnswer,
+                citedNotes: []
+            });
+            return;
+        }
+
         const winningSNo = rankResponse.results.map((r: any) => r.s_no);
 
         const filteredNotes = contents.filter((_, index) => winningSNo.includes(index));
@@ -138,7 +179,11 @@ export const chatWithNotes = async (req: Request, res: Response): Promise<void> 
         // Repopulate citedNotes for the response
         const populatedConversation = await Conversation.findById(conversation._id).populate({
             path: 'messages.citedNotes',
-            model: 'Content'
+            model: 'Content',
+            populate: {
+                path: 'tags',
+                model: 'Tag'
+            }
         });
 
         const lastMessage = populatedConversation?.messages[populatedConversation.messages.length - 1];

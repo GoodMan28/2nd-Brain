@@ -21,6 +21,7 @@ export interface SearchResult {
 
 export interface SearchResponse {
     results: SearchResult[];
+    is_related?: boolean;
 }
 
 export const searchContent = async (req: Request, res: Response): Promise<void> => {
@@ -51,7 +52,7 @@ const notesContext: NoteContext[] = contents.map((note: any, index: number) => (
 
         const rankedResults = await getGroqRankedResults(query, notesContext);
         const contentMap = new Map(contents.map((c, index) => [index, c]))
-        
+        console.log(rankedResults);
         const sortedContent = rankedResults.results
             .map(result => {
                 const content = contentMap.get(result.s_no);
@@ -70,29 +71,25 @@ const notesContext: NoteContext[] = contents.map((note: any, index: number) => (
 export async function getGroqRankedResults(query: string, notes: NoteContext[]): Promise<SearchResponse> {
 
     const systemPrompt = `
-        You are a high-precision search ranking AI. 
-        Your goal is to filter and rank user notes based on a query.
+    You are a high-precision search ranking AI. 
+    Your strict goal is to determine if user notes contain information that directly answers or highly relates to a user's query.
 
-        STRICT MATCHING LOGIC (Perform in order):
-        
-        1. **Direct Keyword Search (Highest Priority)**:
-        - Check 'title', 'tags', and 'description' for the query terms (case-insensitive).
-        
-        2. **Scoring Rubric**:
-        - **1.0**: EXACT CONTENT MATCH (e.g., Query "51" matches Title "Pier 51"). 
-                    *Rule: If the query appears ANYWHERE in the text, it is a 1.0.*
-        - **0.9**: Strong Semantic Match (e.g., "coding" matches "programming").
-        - **0.5**: Vague Match / Weak Association.
-        - **0.0**: No relevance.
+    STRICT SCORING RUBRIC:
+    - 1.0: EXACT INTENT MATCH. The note directly and comprehensively addresses the core intent of the query.
+    - 0.9: STRONG SEMANTIC MATCH. The note contains highly relevant information that heavily contributes to answering the query (e.g., "coding" matching "programming").
+    - 0.6: PARTIAL MATCH. The note contains a passing mention of the topic but does not provide meaningful context.
+    - 0.0: NO RELEVANCE. Tangential, unrelated, or only shares common stop-words.
 
-        3. **Filtering**:
-        - Exclude any item with a score < 0.5. 
-        (Lowering this prevents accidental deletions of partial matches)
-        
-        OUTPUT FORMAT:
-        Return ONLY a valid JSON object:
-        { "results": [ { "s_no": 0, "relevance_score": 0.9 } ] }
-    `;
+    FILTERING INSTRUCTIONS:
+    - DO NOT include any note in the results array with a score below 0.8.
+    
+    OUTPUT FORMAT:
+    Return ONLY a valid JSON object matching this schema:
+    { "is_related": boolean, "results": [ { "s_no": number, "relevance_score": number } ] }
+    
+    CRITICAL INSTRUCTION FOR "is_related":
+    Set "is_related" to true ONLY IF at least one note scores 0.8 or higher AND contains substantive information to address the query. If the notes only contain passing mentions, weak associations, or unrelated topics, set "is_related" to false and return an empty results array. Do not hallucinate connections.
+`;
 
     const userPrompt = `
         Query: "${query}"
@@ -115,7 +112,7 @@ export async function getGroqRankedResults(query: string, notes: NoteContext[]):
         const responseContent = completion.choices[0]?.message?.content;
 
         if (!responseContent) {
-            return { results: [] };
+            return { results: [], is_related: false };
         }
         
         const parsedResponse = JSON.parse(responseContent);
@@ -129,6 +126,6 @@ export async function getGroqRankedResults(query: string, notes: NoteContext[]):
         return parsedResponse;
     } catch (e) {
         console.error("Failed to fetch or parse LLM response:", e);
-        return { results: [] };
+        return { results: [], is_related: false };
     }
 }

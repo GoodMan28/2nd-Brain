@@ -58,7 +58,6 @@ export function AIAssistantPage() {
             }, {
                 headers: { "authorization": `Bearer ${token}` }
             });
-            console.log("conversationId")
 
             if (response.data.success) {
                 const assistantMessage: Message = {
