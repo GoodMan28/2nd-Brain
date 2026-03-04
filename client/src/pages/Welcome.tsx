@@ -1,8 +1,28 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { BrainCircuit, Share2, Sparkles, Shield, ArrowRight } from 'lucide-react';
+import { BrainCircuit, Share2, Sparkles, Shield, ArrowRight, Moon, Sun } from 'lucide-react';
 
 export function Welcome() {
+    const [isDarkMode, setIsDarkMode] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('theme') === 'dark' ||
+                (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        }
+        return false;
+    });
+
+    useEffect(() => {
+        const root = window.document.documentElement;
+        if (isDarkMode) {
+            root.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            root.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+        }
+    }, [isDarkMode]);
+
     return (
         <div className="min-h-screen bg-background relative overflow-hidden flex flex-col">
             {/* Background Gradients */}
@@ -21,6 +41,13 @@ export function Welcome() {
                     <span className="font-bold text-xl tracking-tight">Second Brain</span>
                 </div>
                 <div className="flex items-center gap-4">
+                    <button
+                        onClick={() => setIsDarkMode(!isDarkMode)}
+                        className="p-2 rounded-full bg-card border border-border hover:bg-muted text-muted-foreground hover:text-foreground transition-colors shadow-sm"
+                        aria-label="Toggle dark mode"
+                    >
+                        {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+                    </button>
                     <Link to="/signin" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                         Sign In
                     </Link>
