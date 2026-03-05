@@ -32,7 +32,7 @@ export function Home() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    const { getToken, isSignedIn, isLoaded, userId } = useAuth();
+    const { getToken, isSignedIn, isLoaded } = useAuth();
     const { user } = useUser();
 
     // Share Modal State

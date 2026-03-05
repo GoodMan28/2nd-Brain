@@ -3,7 +3,6 @@ import { ClerkProvider, SignedIn, SignedOut } from '@clerk/clerk-react';
 import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
 import { AIAssistantPage } from './pages/AIAssistantPage';
-import { SettingsPage } from './pages/GenericPages';
 import { Tags } from './pages/Tags';
 import { SignInPage } from './pages/SignInPage';
 import { SignUpPage } from './pages/SignUpPage';
