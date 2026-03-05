@@ -18,9 +18,8 @@ interface ChatHistoryItem {
 }
 
 const MODELS = [
-    { id: 'llama-3.1-8b', name: 'Llama 3.1 8B', description: 'Fast and efficient' },
-    { id: 'llama-3.1-70b', name: 'Llama 3.1 70B', description: 'Powerful reasoning' },
-    { id: 'mixtral-8x7b', name: 'Mixtral 8x7B', description: 'Balanced performance' }
+    { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B', description: 'Fast and efficient' },
+    { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B', description: 'Powerful reasoning' }
 ];
 
 export function AIAssistantPage() {
@@ -100,7 +99,8 @@ export function AIAssistantPage() {
             const token = await getToken();
             const response = await axios.post('http://localhost:3000/api/v1/chat/chat-with-notes', {
                 query: userQuery,
-                conversationId: conversationId
+                conversationId: conversationId,
+                modelId: selectedModel.id
             }, {
                 headers: { "authorization": `Bearer ${token}` }
             });
@@ -201,9 +201,9 @@ export function AIAssistantPage() {
                                                 setSelectedModel(model);
                                                 setIsModelMenuOpen(false);
                                             }}
-                                            className={`flex flex-col gap-0.5 p-3 rounded-xl text-left transition-all ${selectedModel.id === model.id ? 'bg-primary/10 border-primary/20' : 'hover:bg-muted'}`}
+                                            className={`flex flex-col gap-0.5 p-3 rounded-xl text-left transition-all cursor-pointer ${selectedModel.id === model.id ? 'bg-purple-500/10 border-purple-500/20' : 'hover:bg-muted'}`}
                                         >
-                                            <span className={`text-sm font-bold ${selectedModel.id === model.id ? 'text-primary' : 'text-foreground'}`}>
+                                            <span className={`text-sm font-bold ${selectedModel.id === model.id ? 'text-purple-500 dark:text-purple-400' : 'text-foreground'}`}>
                                                 {model.name}
                                             </span>
                                             <span className="text-[10px] text-muted-foreground">{model.description}</span>
