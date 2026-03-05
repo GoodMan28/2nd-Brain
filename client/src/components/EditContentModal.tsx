@@ -4,6 +4,7 @@ import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@clerk/clerk-react';
 import type { Tag } from './NoteCard'; // Import Tag type
+import { BACKEND_URL } from '../config';
 
 interface EditContentModalProps {
     isOpen: boolean;
@@ -84,7 +85,7 @@ export function EditContentModal({ isOpen, onClose, onContentUpdated, initialDat
             try {
                 const token = await getToken();
                 if (!token) return;
-                const res = await axios.get('https://twond-brain-backend-an44.onrender.com/api/v1/tag/getTags', {
+                const res = await axios.get(`${BACKEND_URL}/api/v1/tag/getTags`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (res.data.success) setAvailableTags(res.data.tags);
@@ -140,7 +141,7 @@ export function EditContentModal({ isOpen, onClose, onContentUpdated, initialDat
         try {
             const token = await getToken();
             if (!token) return;
-            const res = await axios.post('https://twond-brain-backend-an44.onrender.com/api/v1/tag/addTag', { title: newTagName }, { headers: { 'Authorization': `Bearer ${token}` } });
+            const res = await axios.post(`${BACKEND_URL}/api/v1/tag/addTag`, { title: newTagName }, { headers: { 'Authorization': `Bearer ${token}` } });
             if (res.data.success && res.data.tag) {
                 const newTag = res.data.tag;
                 if (!availableTags.find(t => t._id === newTag._id)) setAvailableTags(prev => [...prev, newTag]);
@@ -183,7 +184,7 @@ export function EditContentModal({ isOpen, onClose, onContentUpdated, initialDat
             formData.append('links', JSON.stringify(linksToSubmit));
 
             const token = await getToken();
-            await axios.post('https://twond-brain-backend-an44.onrender.com/api/v1/content/editContent', formData, {
+            await axios.post(`${BACKEND_URL}/api/v1/content/editContent`, formData, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 

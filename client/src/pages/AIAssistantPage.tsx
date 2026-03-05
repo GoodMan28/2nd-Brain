@@ -7,6 +7,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
+import { BACKEND_URL } from '../config';
 
 interface Message {
     role: 'user' | 'assistant';
@@ -46,7 +47,7 @@ export function AIAssistantPage() {
     const fetchHistory = async () => {
         try {
             const token = await getToken();
-            const response = await axios.get('https://twond-brain-backend-an44.onrender.com/api/v1/chat/history', {
+            const response = await axios.get(`${BACKEND_URL}/api/v1/chat/history`, {
                 headers: { "authorization": `Bearer ${token}` }
             });
             if (response.data.success) {
@@ -64,7 +65,7 @@ export function AIAssistantPage() {
     const loadConversation = async (id: string) => {
         try {
             const token = await getToken();
-            const response = await axios.get(`https://twond-brain-backend-an44.onrender.com/api/v1/chat/conversation/${id}`, {
+            const response = await axios.get(`${BACKEND_URL}/api/v1/chat/conversation/${id}`, {
                 headers: { "authorization": `Bearer ${token}` }
             });
             if (response.data.success) {
@@ -94,7 +95,7 @@ export function AIAssistantPage() {
 
         try {
             const token = await getToken();
-            const response = await axios.post('https://twond-brain-backend-an44.onrender.com/api/v1/chat/chat-with-notes', {
+            const response = await axios.post(`${BACKEND_URL}/api/v1/chat/chat-with-notes`, {
                 query: userQuery,
                 conversationId: conversationId
             }, {

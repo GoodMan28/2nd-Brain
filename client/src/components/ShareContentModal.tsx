@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Copy, Link as LinkIcon, Check, Loader2, Sparkles } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '@clerk/clerk-react';
+import { BACKEND_URL } from '../config';
 
 // Configure Axios base URL if not already global. 
 // Assuming it might be set elsewhere, but good to be safe or use relative paths if proxy is set.
@@ -39,7 +40,7 @@ export function ShareContentModal({ isOpen, onClose, contentId, title }: ShareCo
             // Using a hardcoded URL for now based on typical setup, but arguably should be from config.
             // Assuming /api/v1/share based on controller context, but the user didn't explicitly give routes.
             // However, the controller method is `shareContent`.
-            const backendUrl = "https://twond-brain-backend-an44.onrender.com/api/v1/share/link"; // Adjust if needed
+            const backendUrl = `${BACKEND_URL}/api/v1/share/link`; // Adjust if needed
 
             const token = await getToken();
 
@@ -68,7 +69,7 @@ export function ShareContentModal({ isOpen, onClose, contentId, title }: ShareCo
         setIsLoading(true);
         try {
             const token = await getToken();
-            await axios.delete('https://twond-brain-backend-an44.onrender.com/api/v1/share/revoke', {
+            await axios.delete(`${BACKEND_URL}/api/v1/share/revoke`, {
                 data: { contentId },
                 headers: { 'Authorization': `Bearer ${token}` }
             });

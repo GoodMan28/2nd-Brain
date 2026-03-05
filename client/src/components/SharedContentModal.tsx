@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useState } from 'react';
 import { useAuth } from '@clerk/clerk-react';
+import { BACKEND_URL } from '../config';
 
 // Reusing interfaces if possible, but defining here for self-containment/ease
 interface SharedContent {
@@ -47,7 +48,7 @@ export function SharedContentModal({ isOpen, onClose, content, canFork, shareTok
         setError('');
         try {
             const token = await getToken();
-            await axios.post(`https://twond-brain-backend-an44.onrender.com/api/v1/share/fork/${shareToken}`, {}, {
+            await axios.post(`${BACKEND_URL}/api/v1/share/fork/${shareToken}`, {}, {
                 headers: { "authorization": `Bearer ${token}` }
             });
 

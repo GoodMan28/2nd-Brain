@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '@clerk/clerk-react';
 import type { Tag } from './NoteCard';
+import { BACKEND_URL } from '../config';
 
 interface FilterModalProps {
     isOpen: boolean;
@@ -34,7 +35,7 @@ export function FilterModal({ isOpen, onClose, selectedTypes, selectedTags, onTy
                 const token = await getToken();
                 if (!token) return;
                 try {
-                    const res = await axios.get('https://twond-brain-backend-an44.onrender.com/api/v1/tag/getTags', {
+                    const res = await axios.get(`${BACKEND_URL}/api/v1/tag/getTags`, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
                     if (res.data.success) {
