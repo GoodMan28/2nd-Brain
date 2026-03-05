@@ -34,7 +34,7 @@ export function FilterModal({ isOpen, onClose, selectedTypes, selectedTags, onTy
                 const token = await getToken();
                 if (!token) return;
                 try {
-                    const res = await axios.get('http://localhost:3000/api/v1/tag/getTags', {
+                    const res = await axios.get('https://twond-brain-backend-an44.onrender.com/api/v1/tag/getTags', {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
                     if (res.data.success) {

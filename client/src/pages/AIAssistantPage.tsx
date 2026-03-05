@@ -46,7 +46,7 @@ export function AIAssistantPage() {
     const fetchHistory = async () => {
         try {
             const token = await getToken();
-            const response = await axios.get('http://localhost:3000/api/v1/chat/history', {
+            const response = await axios.get('https://twond-brain-backend-an44.onrender.com/api/v1/chat/history', {
                 headers: { "authorization": `Bearer ${token}` }
             });
             if (response.data.success) {
@@ -64,7 +64,7 @@ export function AIAssistantPage() {
     const loadConversation = async (id: string) => {
         try {
             const token = await getToken();
-            const response = await axios.get(`http://localhost:3000/api/v1/chat/conversation/${id}`, {
+            const response = await axios.get(`https://twond-brain-backend-an44.onrender.com/api/v1/chat/conversation/${id}`, {
                 headers: { "authorization": `Bearer ${token}` }
             });
             if (response.data.success) {
@@ -94,7 +94,7 @@ export function AIAssistantPage() {
 
         try {
             const token = await getToken();
-            const response = await axios.post('http://localhost:3000/api/v1/chat/chat-with-notes', {
+            const response = await axios.post('https://twond-brain-backend-an44.onrender.com/api/v1/chat/chat-with-notes', {
                 query: userQuery,
                 conversationId: conversationId
             }, {

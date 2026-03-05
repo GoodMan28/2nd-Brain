@@ -47,7 +47,7 @@ export function SharedContentModal({ isOpen, onClose, content, canFork, shareTok
         setError('');
         try {
             const token = await getToken();
-            await axios.post(`http://localhost:3000/api/v1/share/fork/${shareToken}`, {}, {
+            await axios.post(`https://twond-brain-backend-an44.onrender.com/api/v1/share/fork/${shareToken}`, {}, {
                 headers: { "authorization": `Bearer ${token}` }
             });
 

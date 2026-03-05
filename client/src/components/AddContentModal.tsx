@@ -44,7 +44,7 @@ export function AddContentModal({ isOpen, onClose, onContentAdded }: AddContentM
                 const token = await getToken();
                 if (!token) return;
 
-                const res = await axios.get('http://localhost:3000/api/v1/tag/getTags', {
+                const res = await axios.get('https://twond-brain-backend-an44.onrender.com/api/v1/tag/getTags', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (res.data.success) {
@@ -121,7 +121,7 @@ export function AddContentModal({ isOpen, onClose, onContentAdded }: AddContentM
             const existingTag = availableTags.find(t => t.title === newTagName);
             if (existingTag) { setSelectedTags([...selectedTags, existingTag]); setTagInput(''); return; }
 
-            const res = await axios.post('http://localhost:3000/api/v1/tag/addTag',
+            const res = await axios.post('https://twond-brain-backend-an44.onrender.com/api/v1/tag/addTag',
                 { title: newTagName }, { headers: { 'Authorization': `Bearer ${token}` } }
             );
             if (res.data.success && res.data.tag) {
@@ -166,7 +166,7 @@ export function AddContentModal({ isOpen, onClose, onContentAdded }: AddContentM
 
             formData.append('contentData', JSON.stringify(contentPayload));
 
-            await axios.post('http://localhost:3000/api/v1/content/addContent', formData, {
+            await axios.post('https://twond-brain-backend-an44.onrender.com/api/v1/content/addContent', formData, {
                 headers: { 'Content-Type': 'multipart/form-data', 'Authorization': `Bearer ${token}` },
             });
 

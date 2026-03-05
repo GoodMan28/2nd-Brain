@@ -48,7 +48,7 @@ export function Home() {
             try {
                 // Public endpoint, no auth header needed strictly, but if user is logged in backend might use it.
                 // Our backend logic for GET /:shareToken doesn't use userId, works purely on token.
-                const res = await axios.get(`http://localhost:3000/api/v1/share/${shareToken}`);
+                const res = await axios.get(`https://twond-brain-backend-an44.onrender.com/api/v1/share/${shareToken}`);
 
                 if (res.data.content) {
                     setSharedContent(res.data.content);
@@ -84,7 +84,7 @@ export function Home() {
             const token = await getToken();
 
             // Use POST /getContent for filtering support
-            const response = await axios.post("http://localhost:3000/api/v1/content/getContent",
+            const response = await axios.post("https://twond-brain-backend-an44.onrender.com/api/v1/content/getContent",
                 {
                     type: debouncedTypes,
                     tags: debouncedTags
@@ -168,7 +168,7 @@ export function Home() {
 
         try {
             const token = await getToken();
-            const response = await axios.post("http://localhost:3000/api/v1/content/search",
+            const response = await axios.post("https://twond-brain-backend-an44.onrender.com/api/v1/content/search",
                 { query: searchQuery },
                 { headers: { "Authorization": `Bearer ${token}` } }
             );
@@ -381,7 +381,7 @@ export function Home() {
                                         try {
                                             const token = await getToken();
                                             if (!token) return;
-                                            await axios.post("http://localhost:3000/api/v1/content/deleteContent",
+                                            await axios.post("https://twond-brain-backend-an44.onrender.com/api/v1/content/deleteContent",
                                                 { contentId: note.id },
                                                 { headers: { "Authorization": `Bearer ${token}` } }
                                             );

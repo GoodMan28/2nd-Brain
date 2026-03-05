@@ -49,7 +49,7 @@ export function Tags() {
             const token = await getToken();
             if (!token) { setLoading(false); return; }
 
-            const res = await axios.get('http://localhost:3000/api/v1/tag/analytics', {
+            const res = await axios.get('https://twond-brain-backend-an44.onrender.com/api/v1/tag/analytics', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.data.success) {
@@ -89,7 +89,7 @@ export function Tags() {
             const token = await getToken();
             if (!token) return;
 
-            await axios.post('http://localhost:3000/api/v1/tag/deleteTag',
+            await axios.post('https://twond-brain-backend-an44.onrender.com/api/v1/tag/deleteTag',
                 { tagId: tag._id },
                 { headers: { 'Authorization': `Bearer ${token}` } }
             );
@@ -119,7 +119,7 @@ export function Tags() {
             const token = await getToken();
             if (!token) { setIsBulkDeleting(false); return; }
 
-            await axios.post('http://localhost:3000/api/v1/tag/deleteTags',
+            await axios.post('https://twond-brain-backend-an44.onrender.com/api/v1/tag/deleteTags',
                 { tagIds: Array.from(selectedTagIds) },
                 { headers: { 'Authorization': `Bearer ${token}` } }
             );
@@ -154,7 +154,7 @@ export function Tags() {
             const token = await getToken();
             if (!token) { setIsMergeProcessing(false); return; }
 
-            await axios.post('http://localhost:3000/api/v1/tag/mergeTags',
+            await axios.post('https://twond-brain-backend-an44.onrender.com/api/v1/tag/mergeTags',
                 { sourceTagId: mergingTag._id, targetTagId },
                 { headers: { 'Authorization': `Bearer ${token}` } }
             );

@@ -39,7 +39,7 @@ export function ShareContentModal({ isOpen, onClose, contentId, title }: ShareCo
             // Using a hardcoded URL for now based on typical setup, but arguably should be from config.
             // Assuming /api/v1/share based on controller context, but the user didn't explicitly give routes.
             // However, the controller method is `shareContent`.
-            const backendUrl = "http://localhost:3000/api/v1/share/link"; // Adjust if needed
+            const backendUrl = "https://twond-brain-backend-an44.onrender.com/api/v1/share/link"; // Adjust if needed
 
             const token = await getToken();
 
@@ -68,7 +68,7 @@ export function ShareContentModal({ isOpen, onClose, contentId, title }: ShareCo
         setIsLoading(true);
         try {
             const token = await getToken();
-            await axios.delete('http://localhost:3000/api/v1/share/revoke', {
+            await axios.delete('https://twond-brain-backend-an44.onrender.com/api/v1/share/revoke', {
                 data: { contentId },
                 headers: { 'Authorization': `Bearer ${token}` }
             });
