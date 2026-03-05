@@ -3,6 +3,10 @@ import { Send, Sparkles, ChevronDown, BookOpen, Quote, Plus, MessageSquare } fro
 import axios from 'axios';
 import { useAuth } from '@clerk/clerk-react';
 import { SharedContentModal } from '../components/SharedContentModal';
+import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
 
 interface Message {
     role: 'user' | 'assistant';
@@ -224,7 +228,18 @@ export function AIAssistantPage() {
                             </div>
                             <div className="space-y-4 max-w-[85%]">
                                 <div className={`p-4 rounded-2xl text-sm leading-relaxed shadow-sm ${msg.role === 'user' ? 'bg-primary text-primary-foreground rounded-tr-sm' : 'bg-secondary text-secondary-foreground rounded-tl-sm border border-border'}`}>
-                                    {msg.content}
+                                    {msg.role === 'assistant' ? (
+                                        <div className="prose prose-sm dark:prose-invert max-w-none">
+                                            <ReactMarkdown
+                                                remarkPlugins={[remarkMath]}
+                                                rehypePlugins={[rehypeKatex]}
+                                            >
+                                                {msg.content}
+                                            </ReactMarkdown>
+                                        </div>
+                                    ) : (
+                                        msg.content
+                                    )}
                                 </div>
 
                                 {/* Cited Sources */}
