@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { BubbleChart } from '../components/BubbleChart';
-import { Trash2, Merge, RefreshCw, AlertTriangle, ArrowRight } from 'lucide-react';
+import { Trash2, Merge, RefreshCw, AlertTriangle, ArrowRight, ArrowDownWideNarrow, ArrowUpNarrowWide } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@clerk/clerk-react';
 
@@ -24,6 +24,7 @@ export function Tags() {
     const [links, setLinks] = useState<LinkAnalytics[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
 
     // Merge State
     const [mergingTag, setMergingTag] = useState<TagAnalytics | null>(null); // The source tag
@@ -171,37 +172,22 @@ export function Tags() {
         }
     };
 
+    const sortedTags = useMemo(() => {
+        return [...tags].sort((a, b) => {
+            if (sortOrder === 'desc') {
+                return b.usageCount - a.usageCount;
+            } else {
+                return a.usageCount - b.usageCount;
+            }
+        });
+    }, [tags, sortOrder]);
+
     return (
         <div className="p-8 max-w-7xl mx-auto min-h-screen">
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex flex-col mb-8">
                 <div>
                     <h1 className="text-3xl font-bold text-foreground tracking-tight">Tags Management</h1>
                     <p className="text-muted-foreground mt-1">Visualize and organize your knowledge graph.</p>
-                </div>
-                <div className="flex gap-2">
-                    <button
-                        onClick={toggleSelectionMode}
-                        className={`px-4 py-2 rounded-xl transition-colors font-medium text-sm ${isSelectionMode ? 'bg-secondary text-foreground' : 'bg-primary/10 text-primary hover:bg-primary/20'}`}
-                    >
-                        {isSelectionMode ? "Cancel Selection" : "Select Tags"}
-                    </button>
-                    {isSelectionMode && selectedTagIds.size > 0 && (
-                        <button
-                            onClick={handleBulkDelete}
-                            disabled={isBulkDeleting}
-                            className="px-4 py-2 bg-destructive text-destructive-foreground rounded-xl transition-colors font-medium text-sm flex items-center gap-2 hover:bg-destructive/90"
-                        >
-                            {isBulkDeleting ? <RefreshCw className="animate-spin" size={16} /> : <Trash2 size={16} />}
-                            Delete ({selectedTagIds.size})
-                        </button>
-                    )}
-                    <button
-                        onClick={fetchTags}
-                        className="p-2 bg-secondary hover:bg-secondary/80 rounded-xl transition-colors text-foreground"
-                        title="Refresh"
-                    >
-                        <RefreshCw size={20} className={loading ? "animate-spin" : ""} />
-                    </button>
                 </div>
             </div>
 
@@ -231,11 +217,48 @@ export function Tags() {
                 />
             </div>
 
-            {/* Tags Grid */}
-            <h2 className="text-xl font-bold text-foreground mb-4">All Tags ({tags.length})</h2>
+            {/* Tags Grid Section Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                <h2 className="text-xl font-bold text-foreground">All Tags ({sortedTags.length})</h2>
+
+                {/* Action Buttons */}
+                <div className="flex flex-wrap gap-2">
+                    <button
+                        onClick={toggleSelectionMode}
+                        className={`px-4 py-2 rounded-xl transition-colors font-medium text-sm ${isSelectionMode ? 'bg-secondary text-foreground' : 'bg-primary/10 text-primary hover:bg-primary/20'}`}
+                    >
+                        {isSelectionMode ? "Cancel Selection" : "Select Tags"}
+                    </button>
+                    {isSelectionMode && selectedTagIds.size > 0 && (
+                        <button
+                            onClick={handleBulkDelete}
+                            disabled={isBulkDeleting}
+                            className="px-4 py-2 bg-destructive text-destructive-foreground rounded-xl transition-colors font-medium text-sm flex items-center gap-2 hover:bg-destructive/90"
+                        >
+                            {isBulkDeleting ? <RefreshCw className="animate-spin" size={16} /> : <Trash2 size={16} />}
+                            Delete ({selectedTagIds.size})
+                        </button>
+                    )}
+                    <button
+                        onClick={fetchTags}
+                        className="p-2 bg-secondary hover:bg-secondary/80 rounded-xl transition-colors text-foreground"
+                        title="Refresh"
+                    >
+                        <RefreshCw size={20} className={loading ? "animate-spin" : ""} />
+                    </button>
+                    <button
+                        onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')}
+                        className="p-2 bg-secondary hover:bg-secondary/80 rounded-xl transition-colors text-foreground flex items-center gap-2"
+                        title={`Sort by Usage (${sortOrder === 'desc' ? 'Descending' : 'Ascending'})`}
+                    >
+                        {sortOrder === 'desc' ? <ArrowDownWideNarrow size={20} /> : <ArrowUpNarrowWide size={20} />}
+                    </button>
+                </div>
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 <AnimatePresence>
-                    {tags.map(tag => (
+                    {sortedTags.map(tag => (
                         <motion.div
                             key={tag._id}
                             id={`tag-${tag._id}`}
@@ -374,7 +397,7 @@ export function Tags() {
                                         {deleteConflict.msg || `This tag is currently used by ${deleteConflict.count} items.`}
                                     </p>
                                     <p className="text-sm text-muted-foreground mb-6">
-                                        You must remove tags from content or <strong>Merge</strong> them before deletion.
+                                        You must remove the tags from your content or <strong>Merge</strong> them before deletion.
                                     </p>
                                     <div className="flex justify-end gap-2">
                                         <button

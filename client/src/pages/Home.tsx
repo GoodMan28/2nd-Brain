@@ -38,6 +38,7 @@ export function Home() {
     const [sharedContent, setSharedContent] = useState<any>(null);
     const [isSharedModalOpen, setIsSharedModalOpen] = useState(false);
     const [canFork, setCanFork] = useState(false);
+    const [sharedFetchError, setSharedFetchError] = useState<string>("");
 
     // Handle Shared Content Loading
     useEffect(() => {
@@ -52,12 +53,14 @@ export function Home() {
                 if (res.data.content) {
                     setSharedContent(res.data.content);
                     setCanFork(res.data.canFork);
+                    setSharedFetchError("");
                     setIsSharedModalOpen(true);
                 }
-            } catch (err) {
+            } catch (err: any) {
                 console.error("Failed to load shared content", err);
-                // Optionally redirect to home on error or show toast
-                // navigate('/'); 
+                setSharedContent(null);
+                setSharedFetchError(err.response?.data?.message || "Link invalid or expired");
+                setIsSharedModalOpen(true);
             }
         };
 
@@ -216,11 +219,13 @@ export function Home() {
                     setIsSharedModalOpen(false);
                     navigate('/'); // Clear URL
                     // Don't clear sharedContent immediately to prevent flash before animation ends
+                    setTimeout(() => setSharedFetchError(""), 300);
                 }}
                 content={sharedContent}
                 canFork={canFork}
                 shareToken={shareToken}
                 onForkSuccess={fetchNotes}
+                fetchError={sharedFetchError}
             />
 
             {/* Header Section */}

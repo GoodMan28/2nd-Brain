@@ -6,7 +6,7 @@ import { Content } from "../models/content.js"
 import mongoose from "mongoose";
 
 let tagSchema = z.object({
-    title: z.string().min(1).max(30).lowercase()
+    title: z.string().min(1).max(30).trim().toLowerCase()
 })
 type tagType = z.infer<typeof tagSchema>
 
