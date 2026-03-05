@@ -43,7 +43,7 @@ export function AIAssistantPage() {
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     };
 
     useEffect(() => {
@@ -128,7 +128,7 @@ export function AIAssistantPage() {
     };
 
     return (
-        <div className="flex h-[calc(100vh-64px)] w-full">
+        <div className="flex h-[calc(100vh-64px)] w-full overflow-hidden">
             {/* Sidebar (History) */}
             <div className="w-64 lg:w-72 border-r border-border hidden md:flex flex-col bg-muted/10 p-4 flex-shrink-0">
                 <button
@@ -170,7 +170,7 @@ export function AIAssistantPage() {
             </div>
 
             {/* Main Chat Area */}
-            <div className="flex-1 flex flex-col p-4 sm:p-6 w-full relative min-w-0">
+            <div className="flex-1 flex flex-col p-4 sm:p-6 w-full relative min-w-0 min-h-0 overflow-hidden">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-3">
@@ -220,7 +220,7 @@ export function AIAssistantPage() {
                 </div>
 
                 {/* Chat Messages */}
-                <div className="flex-1 bg-card rounded-3xl border border-border shadow-sm p-4 sm:p-6 overflow-y-auto mb-6 space-y-6 custom-scrollbar scroll-smooth">
+                <div className="flex-1 min-h-0 overflow-y-auto bg-card rounded-3xl border border-border shadow-sm p-4 sm:p-6 space-y-6 custom-scrollbar scroll-smooth mb-6">
                     {messages.map((msg, idx) => (
                         <div key={idx} className={`flex gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
                             <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-[10px] font-bold shadow-sm ${msg.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted border border-border text-muted-foreground'}`}>
@@ -229,7 +229,7 @@ export function AIAssistantPage() {
                             <div className="space-y-4 max-w-[85%]">
                                 <div className={`p-4 rounded-2xl text-sm leading-relaxed shadow-sm ${msg.role === 'user' ? 'bg-primary text-primary-foreground rounded-tr-sm' : 'bg-secondary text-secondary-foreground rounded-tl-sm border border-border'}`}>
                                     {msg.role === 'assistant' ? (
-                                        <div className="prose prose-sm dark:prose-invert max-w-none">
+                                        <div className="prose prose-sm dark:prose-invert max-w-none break-words overflow-x-auto w-full">
                                             <ReactMarkdown
                                                 remarkPlugins={[remarkMath]}
                                                 rehypePlugins={[rehypeKatex]}
@@ -277,7 +277,7 @@ export function AIAssistantPage() {
                 </div>
 
                 {/* Input Area */}
-                <div className="relative group">
+                <div className="relative flex-none mt-auto">
                     <input
                         type="text"
                         value={input}

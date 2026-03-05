@@ -142,6 +142,7 @@ export const chatWithNotes = async (req: Request, res: Response): Promise<void> 
             1. NO EXTERNAL KNOWLEDGE: If the provided notes do not contain the specific facts needed to answer the query, you MUST state: "I cannot answer this based on your provided notes." Do not attempt to guess or use outside knowledge.
             2. CITATIONS: You must justify your answer by citing the "s_no" of the exact notes you extracted facts from.
             3. NO HALLUCINATED CITATIONS: Only cite an "s_no" if you actively used its content. If you cannot answer the query, the "cited_s_no" array MUST be empty.
+            4. MATH FORMATTING & ESCAPING: If your answer contains ANY mathematical equations, variables, Greek letters, or exponents (like x^2), you MUST wrap them in LaTeX delimiters: $ for inline (e.g., $x^2$) and $$ for block. MOST IMPORTANTLY, because you are outputting JSON, you MUST double-escape all LaTeX backslashes so they parse correctly on the frontend. Example: Use $\\\\phi$ instead of $\\phi$, and $\\\\frac{1}{2}$ instead of $\\frac{1}{2}$. DO NOT use plaintext symbols like ^ outside of $ delimiters.
 
             OUTPUT FORMAT:
             Return ONLY a valid JSON object matching this schema:
