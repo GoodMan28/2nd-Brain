@@ -9,7 +9,7 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 export const chatWithNotes = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { query, conversationId, modelId } = req.body;
+        const { query, conversationId } = req.body;
         const userId = (req as any).userId;
 
         if (!query) {
@@ -52,7 +52,7 @@ export const chatWithNotes = async (req: Request, res: Response): Promise<void> 
                         },
                         { role: "user", content: `History:\n${chatHistory}\n\nQuery: ${query}` }
                     ],
-                    model: modelId || "llama-3.1-8b-instant",
+                    model: "llama-3.1-8b-instant",
                     temperature: 0.1,
                     response_format: { type: "json_object" }
                 });
@@ -157,7 +157,7 @@ export const chatWithNotes = async (req: Request, res: Response): Promise<void> 
                 { role: "system", content: genSystemPrompt },
                 { role: "user", content: `Context Notes:\n${JSON.stringify(filteredContext)}\n\nQuery: ${query}` },
             ],
-            model: modelId || "llama-3.1-8b-instant",
+            model: "llama-3.1-8b-instant",
             temperature: 0.5,
             response_format: { type: "json_object" }
         });

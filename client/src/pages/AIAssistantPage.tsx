@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Sparkles, ChevronDown, BookOpen, Quote, Plus, MessageSquare } from 'lucide-react';
+import { Send, Sparkles, BookOpen, Quote, Plus, MessageSquare } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '@clerk/clerk-react';
 import { SharedContentModal } from '../components/SharedContentModal';
@@ -21,11 +21,6 @@ interface ChatHistoryItem {
     preview: string;
 }
 
-const MODELS = [
-    { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B', description: 'Fast and efficient' },
-    { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B', description: 'Powerful reasoning' }
-];
-
 export function AIAssistantPage() {
     const { getToken } = useAuth();
     const [messages, setMessages] = useState<Message[]>([
@@ -35,8 +30,6 @@ export function AIAssistantPage() {
     const [input, setInput] = useState('');
     const [isSending, setIsSending] = useState(false);
     const [conversationId, setConversationId] = useState<string | null>(null);
-    const [selectedModel, setSelectedModel] = useState(MODELS[0]);
-    const [isModelMenuOpen, setIsModelMenuOpen] = useState(false);
     const [selectedCitedNote, setSelectedCitedNote] = useState<any | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -103,8 +96,7 @@ export function AIAssistantPage() {
             const token = await getToken();
             const response = await axios.post('http://localhost:3000/api/v1/chat/chat-with-notes', {
                 query: userQuery,
-                conversationId: conversationId,
-                modelId: selectedModel.id
+                conversationId: conversationId
             }, {
                 headers: { "authorization": `Bearer ${token}` }
             });
@@ -181,41 +173,6 @@ export function AIAssistantPage() {
                             <h1 className="text-xl sm:text-2xl font-bold text-foreground">AI Assistant</h1>
                             <p className="text-muted-foreground text-xs sm:text-sm">Ask about your notes and ideas.</p>
                         </div>
-                    </div>
-
-                    {/* Model Selector */}
-                    <div className="relative">
-                        <button
-                            onClick={() => setIsModelMenuOpen(!isModelMenuOpen)}
-                            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-card border border-border hover:bg-muted transition-colors text-sm font-medium shadow-sm"
-                        >
-                            <span className="hidden sm:inline text-muted-foreground mr-1">Model:</span>
-                            {selectedModel.name}
-                            <ChevronDown size={14} className={`transition-transform duration-200 ${isModelMenuOpen ? 'rotate-180' : ''}`} />
-                        </button>
-
-                        {isModelMenuOpen && (
-                            <>
-                                <div className="fixed inset-0 z-40" onClick={() => setIsModelMenuOpen(false)} />
-                                <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-card border border-border shadow-2xl z-50 overflow-hidden p-1 flex flex-col gap-1 anim-fade-in-up">
-                                    {MODELS.map(model => (
-                                        <button
-                                            key={model.id}
-                                            onClick={() => {
-                                                setSelectedModel(model);
-                                                setIsModelMenuOpen(false);
-                                            }}
-                                            className={`flex flex-col gap-0.5 p-3 rounded-xl text-left transition-all cursor-pointer ${selectedModel.id === model.id ? 'bg-purple-500/10 border-purple-500/20' : 'hover:bg-muted'}`}
-                                        >
-                                            <span className={`text-sm font-bold ${selectedModel.id === model.id ? 'text-purple-500 dark:text-purple-400' : 'text-foreground'}`}>
-                                                {model.name}
-                                            </span>
-                                            <span className="text-[10px] text-muted-foreground">{model.description}</span>
-                                        </button>
-                                    ))}
-                                </div>
-                            </>
-                        )}
                     </div>
                 </div>
 
