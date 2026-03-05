@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import {
     Library,
     Tags,
-    Settings,
+    // Settings,
     ChevronLeft,
     ChevronRight,
     Sparkles
@@ -63,7 +63,7 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
         { icon: Library, label: 'All Notes', to: '/' },
         { icon: Sparkles, label: 'AI Assistant', to: '/ai' },
         { icon: Tags, label: 'Tags', to: '/tags' },
-        { icon: Settings, label: 'Settings', to: '/settings' },
+        // { icon: Settings, label: 'Settings', to: '/settings' },
     ];
 
     return (

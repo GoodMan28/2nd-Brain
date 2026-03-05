@@ -39,7 +39,7 @@ function ClerkProviderWithRoutes() {
                     <Route path="/" element={<Home />} />
                     <Route path="/ai" element={<AIAssistantPage />} />
                     <Route path="/tags" element={<Tags />} />
-                    <Route path="/settings" element={<SettingsPage />} />
+                    {/* <Route path="/settings" element={<SettingsPage />} /> */}
                     {/* Redirect unknown protected routes to home */}
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>
