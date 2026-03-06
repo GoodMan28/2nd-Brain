@@ -8,7 +8,7 @@
 
 ---
 
-## 🚀 Core Features
+## Core Features
 
 - **Secure Authentication**: Robust user login and identity management via Clerk.
 - **Rich Content Creation**: Full support for Markdown formatting alongside complex math formula rendering (KaTeX).
@@ -16,7 +16,7 @@
 - **Shareable Content**: Seamlessly generate public, shareable links for individual notes and curated collections.
 - **Smart Chat Interface**: Chat with your saved notes natively via a sophisticated Language Model API integration.
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Frontend (`/client`)
 - **React 19** & **Vite**: Blazing fast UI development and builds.
@@ -32,7 +32,7 @@
 - **MongoDB & Mongoose**: Flexible, schema-based NoSQL database management.
 - **CORS** & **dotenv**: Secure cross-origin resource sharing and environment variable management.
 
-## 📂 Project Structure
+## Project Structure
 
 This project follows a monorepo setup:
 
@@ -42,7 +42,7 @@ This project follows a monorepo setup:
 └── server/     # Backend Express.js API
 ```
 
-## 🔌 API Routes Summary
+## API Routes Summary
 
 The backend exposes the following core RESTful endpoints:
 
@@ -54,7 +54,7 @@ The backend exposes the following core RESTful endpoints:
 | `/api/v1/share`      | Generation, retrieval, and revocation of public shareable links.     |
 | `/api/v1/chat`       | Routes processing Language Model API queries against user content.   |
 
-## 💻 Local Setup Instructions
+## Local Setup Instructions
 
 Follow these steps to run the application locally.
 
@@ -111,16 +111,16 @@ npm run dev
 
 ---
 
-## ✒️ Author
+## Author
 **Abhineet Anand**
 
 ---
 
-## 🤖 Chat Architecture & Workflow
+## Chat Architecture & Workflow
 
 This document outlines the architecture and data flow for the integrated chat feature within the Second Brain application. The system securely connects the React frontend, Express backend, MongoDB, and the Language Model API to provide context-aware responses based on user-saved notes.
 
-### 📐 System Architecture
+### System Architecture
 
 The following sequence diagram illustrates the step-by-step lifecycle of a single chat request.
 
@@ -157,7 +157,7 @@ sequenceDiagram
     Client->>User: Render response via React Markdown & KaTeX
 ```
 
-### 🔄 3-Step Chat Pipeline
+### 3-Step Chat Pipeline
 
 Behind the scenes, the Express backend executes a sophisticated 3-step pipeline to ensure high-quality, context-aware responses:
 
