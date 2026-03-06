@@ -175,5 +175,5 @@ flowchart TD
 
 ### Author
 
-Yours Lovingly
-ABHINEET ANAND
+Yours Lovingly!! <br>
+<b>ABHINEET ANAND</b>
