@@ -111,11 +111,6 @@ npm run dev
 
 ---
 
-## Author
-**Abhineet Anand**
-
----
-
 ## Chat Architecture & Workflow
 
 This document outlines the architecture and data flow for the integrated chat feature within the Second Brain application. The system securely connects the React frontend, Express backend, MongoDB, and the Language Model API to provide context-aware responses based on user-saved notes.
