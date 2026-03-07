@@ -7,6 +7,7 @@ import { Tags } from './pages/Tags';
 import { SignInPage } from './pages/SignInPage';
 import { SignUpPage } from './pages/SignUpPage';
 import { Welcome } from './pages/Welcome';
+import { DeveloperPage } from './pages/DeveloperPage';
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
@@ -25,6 +26,7 @@ function ClerkProviderWithRoutes() {
         <Route path="/signin/*" element={<SignInPage />} />
         <Route path="/signup/*" element={<SignUpPage />} />
         <Route path="/welcome" element={<Welcome />} />
+        <Route path="/developer" element={<DeveloperPage />} />
         <Route path="/share/:shareToken" element={<Layout><Home /></Layout>} />
 
         {/* Protected Routes */}

@@ -8,6 +8,7 @@ import { contentRouter } from "./routes/contentRoute.js";
 import tagRouter from "./routes/tagRoute.js";
 import shareRouter from "./routes/shareRoute.js";
 import chatRouter from "./routes/chatRoute.js";
+import contactRouter from "./routes/contactRoute.js";
 let app = express()
 const allowedOrigins = [
     "http://localhost:5173", // For local development
@@ -33,6 +34,7 @@ app.use("/api/v1/content", contentRouter)
 app.use("/api/v1/tag", tagRouter)
 app.use("/api/v1/share/", shareRouter)
 app.use("/api/v1/chat", chatRouter)
+app.use("/api/v1/contact", contactRouter)
 app.get("/", (req, res) => {
     res.status(200).json({
         "success": true,
