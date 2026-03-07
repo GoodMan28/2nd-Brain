@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="400" height="400">
+  <defs>
+    <linearGradient id="aiGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#6366F1" />
+    </linearGradient>
+
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="1.5" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="200" height="200" rx="45" fill="#0F172A" stroke="#6366F1" stroke-width="2" stroke-opacity="0.3" />
+
+  <g stroke="#F8FAFC" fill="none" stroke-width="2.5" stroke-linecap="round">
+    <path d="M 96 30 C 50 30, 25 60, 25 100 C 25 125, 40 145, 60 160 C 75 168, 88 170, 96 170" />
+    
+    <circle cx="70" cy="95" r="14" />
+    <circle cx="70" cy="95" r="5" fill="#F8FAFC" />
+    <circle cx="45" cy="70" r="10" />
+    <circle cx="45" cy="120" r="10" />
+    <circle cx="75" cy="50" r="8" />
+    <circle cx="75" cy="140" r="8" />
+    
+    <circle cx="40" cy="95" r="4" fill="#F8FAFC" />
+    <circle cx="60" cy="125" r="3" fill="#F8FAFC" />
+    <circle cx="60" cy="65" r="3" fill="#F8FAFC" />
+    <circle cx="85" cy="70" r="3" fill="#F8FAFC" />
+    <circle cx="85" cy="120" r="3" fill="#F8FAFC" />
+
+    <path d="M 70 81 A 20 20 0 0 0 52 76" />
+    <path d="M 70 109 A 20 20 0 0 1 52 114" />
+    <path d="M 45 80 A 15 15 0 0 0 42 91" />
+    <path d="M 45 110 A 15 15 0 0 1 42 99" />
+    <path d="M 75 58 A 25 25 0 0 1 73 81" />
+    <path d="M 75 132 A 25 25 0 0 0 73 109" />
+    <path d="M 96 60 A 35 35 0 0 0 83 52" />
+    <path d="M 96 130 A 35 35 0 0 1 83 138" />
+  </g>
+
+  <g stroke="url(#aiGrad)" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)">
+    <path d="M 104 30 C 150 30, 175 60, 175 100 C 175 125, 160 145, 140 160 C 125 168, 112 170, 104 170" />
+    
+    <rect x="115" y="85" width="20" height="20" rx="1" />
+    <rect x="120" y="90" width="10" height="10" fill="url(#aiGrad)" />
+
+    <path d="M 135 90 L 145 90 L 155 80 L 155 70" />
+    <path d="M 135 100 L 145 100 L 155 110 L 155 120" />
+    <path d="M 125 85 L 125 60 L 115 50 L 104 50" />
+    <path d="M 125 105 L 125 130 L 115 140 L 104 140" />
+    <path d="M 155 70 L 165 70 L 165 80" />
+    <path d="M 155 120 L 165 120 L 165 110" />
+    <path d="M 115 85 L 115 70 L 104 70" />
+    <path d="M 115 105 L 115 120 L 104 120" />
+    
+    <path d="M 104 80 L 110 80 L 110 85" />
+    <path d="M 104 110 L 110 110 L 110 105" />
+
+    <rect x="153" y="68" width="4" height="4" fill="#38BDF8" />
+    <rect x="153" y="118" width="4" height="4" fill="#38BDF8" />
+    <rect x="163" y="78" width="4" height="4" fill="#38BDF8" />
+    <rect x="163" y="108" width="4" height="4" fill="#38BDF8" />
+    <rect x="123" y="58" width="4" height="4" fill="#38BDF8" />
+    <rect x="123" y="128" width="4" height="4" fill="#38BDF8" />
+  </g>
+
+  <g stroke="#F8FAFC" fill="none" stroke-width="2" stroke-linecap="round">
+    <line x1="90" y1="95" x2="115" y2="95" stroke-width="3" />
+    
+    <line x1="96" y1="70" x2="104" y2="70" opacity="0.5" />
+    <line x1="96" y1="120" x2="104" y2="120" opacity="0.5" />
+    <line x1="96" y1="50" x2="104" y2="50" opacity="0.5" />
+    <line x1="96" y1="140" x2="104" y2="140" opacity="0.5" />
+    <line x1="96" y1="80" x2="104" y2="80" opacity="0.8" />
+    <line x1="96" y1="110" x2="104" y2="110" opacity="0.8" />
+  </g>
+</svg>

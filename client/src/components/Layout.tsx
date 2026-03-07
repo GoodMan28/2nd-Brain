@@ -1,6 +1,7 @@
 import { useState, useEffect, type ReactNode } from 'react';
 import { Sidebar } from './Sidebar';
 import { UserButton } from '@clerk/clerk-react';
+import { dark } from '@clerk/themes';
 import { Moon, Sun } from 'lucide-react';
 
 export function Layout({ children }: { children: ReactNode }) {
@@ -29,7 +30,7 @@ export function Layout({ children }: { children: ReactNode }) {
             <Sidebar isCollapsed={isSidebarCollapsed} setIsCollapsed={setIsSidebarCollapsed} />
 
             <main
-                className={`transition-[margin] duration-300 min-h-screen bg-background flex flex-col w-full ${isSidebarCollapsed ? "ml-[80px]" : "ml-[80px] md:ml-[260px]"
+                className={`transition-[margin] duration-300 min-h-screen bg-background flex flex-col flex-1 min-w-0 ${isSidebarCollapsed ? "ml-[80px]" : "ml-[80px] md:ml-[260px]"
                     }`}
             >
                 {/* Top Bar */}
@@ -41,7 +42,16 @@ export function Layout({ children }: { children: ReactNode }) {
                     >
                         {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
                     </button>
-                    <UserButton />
+                    <UserButton
+                        appearance={{
+                            baseTheme: isDarkMode ? dark : undefined,
+                            elements: {
+                                userButtonPopoverCard: isDarkMode ? "bg-card border-border" : "",
+                                userButtonPopoverActionButton: isDarkMode ? "hover:bg-muted text-foreground" : "",
+                                userButtonPopoverActionButtonText: isDarkMode ? "text-foreground" : "",
+                            }
+                        }}
+                    />
                 </header>
 
                 <div className="w-full flex-1">
