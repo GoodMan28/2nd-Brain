@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { BrainCircuit, Share2, Sparkles, Shield, ArrowRight, Moon, Sun } from 'lucide-react';
+import { Share2, Sparkles, Shield, ArrowRight, Moon, Sun } from 'lucide-react';
+
+import { SecondBrainLogo } from '../components/ui/icons/SecondBrainLogo';
 
 export function Welcome() {
     const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -34,10 +36,8 @@ export function Welcome() {
 
             {/* Header */}
             <header className="px-6 py-6 flex justify-between items-center max-w-7xl mx-auto w-full">
-                <div className="flex items-center gap-2">
-                    <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-bold shadow-lg shadow-primary/20">
-                        2B
-                    </div>
+                <div className="flex items-center gap-2 lg:gap-3">
+                    <SecondBrainLogo className="w-10 h-10 shadow-lg shadow-primary/20 rounded-xl" />
                     <span className="font-bold text-xl tracking-tight">Second Brain</span>
                 </div>
                 <div className="flex items-center gap-4">
@@ -111,7 +111,7 @@ export function Welcome() {
                         description="Share your notes and collections with a single click. Collaborate instantly."
                     />
                     <FeatureCard
-                        icon={BrainCircuit}
+                        icon={SecondBrainLogo}
                         title="AI Integration"
                         description="Auto-tagging, summarization, and smart search powered by advanced AI."
                     />

@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { SecondBrainLogo } from './ui/icons/SecondBrainLogo';
 
 function cn(...inputs: (string | undefined | null | false)[]) {
     return twMerge(clsx(inputs));
@@ -76,14 +77,12 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
             {/* Header */}
             <div className={cn("flex items-center p-6 h-[88px]", isCollapsed ? "justify-center" : "justify-between")}>
                 <a href="/" className={cn("flex items-center gap-2 overflow-hidden", isCollapsed && "hidden")}>
-                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center text-primary-foreground font-bold shadow-lg shadow-primary/20">
-                        2B
-                    </div>
-                    <span className="font-bold text-lg text-foreground tracking-tight">Second Brain</span>
+                    <SecondBrainLogo className="w-8 h-8 rounded-xl shadow-lg shadow-primary/20 flex-shrink-0" />
+                    <span className="font-bold text-lg text-foreground tracking-tight whitespace-nowrap">Second Brain</span>
                 </a>
                 {isCollapsed && (
-                    <a href="/" className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center text-primary-foreground font-bold text-xs shadow-lg shadow-primary/20">
-                        2B
+                    <a href="/">
+                        <SecondBrainLogo className="w-8 h-8 rounded-xl shadow-lg shadow-primary/20 flex-shrink-0" />
                     </a>
                 )}
             </div>

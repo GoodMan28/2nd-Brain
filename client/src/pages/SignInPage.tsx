@@ -9,44 +9,46 @@ export const SignInPage = () => {
 
     return (
         <AuthLayout>
-            <SignIn
-                path="/signin"
-                routing="path"
-                signUpUrl={`/signup${searchParams.get('redirect_url') ? `?redirect_url=${encodeURIComponent(searchParams.get('redirect_url')!)}` : ''}`}
-                forceRedirectUrl={redirectUrl}
-                appearance={{
-                    baseTheme: dark,
-                    variables: {
-                        colorBackground: '#1E293B',
-                        colorInputBackground: '#0F172A',
-                        colorPrimary: '#6366F1',
-                        colorText: '#F8FAFC',
-                    },
-                    elements: {
-                        rootBox: "w-full",
-                        card: "bg-transparent shadow-none border-0 w-full p-0 m-0",
-                        headerTitle: "text-[#F8FAFC] text-2xl font-semibold mb-1",
-                        headerSubtitle: "text-slate-400 mb-6",
-                        formFieldLabel: "text-slate-300 font-medium mb-1.5",
-                        formFieldInput: "bg-[#0F172A] border-slate-700 text-[#F8FAFC] rounded-lg focus:border-[#6366F1] focus:ring-1 focus:ring-[#6366F1] transition-colors",
-                        formButtonPrimary: "bg-[#6366F1] hover:bg-indigo-600 text-white rounded-lg py-2.5 font-medium transition-colors border-0 shadow-lg shadow-indigo-500/20",
-                        socialButtonsBlockButton: "bg-[#0F172A] border border-slate-700 hover:bg-slate-800 text-slate-300 rounded-lg py-2.5 transition-colors",
-                        socialButtonsBlockButtonText: "font-medium",
-                        footerActionText: "text-slate-400",
-                        footerActionLink: "text-[#6366F1] hover:text-indigo-400 font-medium",
-                        dividerLine: "bg-slate-700",
-                        dividerText: "text-slate-400",
-                        formFieldAction: "text-[#6366F1] hover:text-indigo-400",
-                        identityPreviewText: "text-slate-300",
-                        identityPreviewEditButton: "text-[#6366F1] hover:text-indigo-400",
-                    },
-                    layout: {
-                        logoPlacement: "none", // Handled externally or implicitly by the layout
-                        socialButtonsVariant: "blockButton",
-                        socialButtonsPlacement: "bottom"
-                    }
-                }}
-            />
+            {(isDarkMode) => (
+                <SignIn
+                    path="/signin"
+                    routing="path"
+                    signUpUrl={`/signup${searchParams.get('redirect_url') ? `?redirect_url=${encodeURIComponent(searchParams.get('redirect_url')!)}` : ''}`}
+                    forceRedirectUrl={redirectUrl}
+                    appearance={{
+                        baseTheme: isDarkMode ? dark : undefined,
+                        variables: {
+                            colorBackground: isDarkMode ? '#1E293B' : '#FFFFFF',
+                            colorInputBackground: isDarkMode ? '#0F172A' : '#F8FAFC',
+                            colorPrimary: '#6366F1',
+                            colorText: isDarkMode ? '#F8FAFC' : '#0F172A',
+                        },
+                        elements: {
+                            rootBox: "w-full",
+                            card: "bg-transparent shadow-none border-0 w-full p-0 m-0",
+                            headerTitle: `${isDarkMode ? 'text-[#F8FAFC]' : 'text-slate-900'} text-2xl font-semibold mb-1`,
+                            headerSubtitle: `${isDarkMode ? 'text-slate-400' : 'text-slate-500'} mb-6`,
+                            formFieldLabel: `${isDarkMode ? 'text-slate-300' : 'text-slate-700'} font-medium mb-1.5`,
+                            formFieldInput: `${isDarkMode ? 'bg-[#0F172A] border-slate-700 text-[#F8FAFC]' : 'bg-slate-50 border-slate-300 text-slate-900'} rounded-lg focus:border-[#6366F1] focus:ring-1 focus:ring-[#6366F1] transition-colors`,
+                            formButtonPrimary: "bg-[#6366F1] hover:bg-indigo-600 text-white rounded-lg py-2.5 font-medium transition-colors border-0 shadow-lg shadow-indigo-500/20",
+                            socialButtonsBlockButton: `${isDarkMode ? 'bg-[#0F172A] border-slate-700 hover:bg-slate-800 text-slate-300' : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-600'} rounded-lg py-2.5 transition-colors`,
+                            socialButtonsBlockButtonText: "font-medium",
+                            footerActionText: `${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`,
+                            footerActionLink: "text-[#6366F1] hover:text-indigo-500 font-medium",
+                            dividerLine: `${isDarkMode ? 'bg-slate-700' : 'bg-slate-200'}`,
+                            dividerText: `${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`,
+                            formFieldAction: "text-[#6366F1] hover:text-indigo-500",
+                            identityPreviewText: `${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`,
+                            identityPreviewEditButton: "text-[#6366F1] hover:text-indigo-500",
+                        },
+                        layout: {
+                            logoPlacement: "none",
+                            socialButtonsVariant: "blockButton",
+                            socialButtonsPlacement: "bottom"
+                        }
+                    }}
+                />
+            )}
         </AuthLayout>
     );
 };
