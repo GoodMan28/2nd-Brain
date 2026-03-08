@@ -4,8 +4,7 @@ import { Link } from 'react-router-dom';
 import { Github, Linkedin, Mail, Send, ArrowLeft } from 'lucide-react';
 import axios from 'axios';
 import { CircuitBackground } from '../components/ui/CircuitBackground';
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-
+import { BACKEND_URL } from '../config';
 export function DeveloperPage() {
     const [formData, setFormData] = useState({ name: '', email: '', message: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -15,8 +14,9 @@ export function DeveloperPage() {
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            // await axios.post(`${BACKEND_URL}/api/v1/contact`, formData);
             await axios.post(`${BACKEND_URL}/api/v1/contact`, formData);
+            // await axios.post(`http://localhost:3000/api/v1/contact`, formData);
+
             setSubmitted(true);
             setFormData({ name: '', email: '', message: '' });
         } catch (error) {

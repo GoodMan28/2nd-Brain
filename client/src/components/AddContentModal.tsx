@@ -3,7 +3,7 @@ import { X, Plus, Upload, Link as LinkIcon, File as FileIcon, Loader2 } from 'lu
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@clerk/clerk-react';
-import { BACKEND_URL } from '../config';
+import { BACKEND_URL } from '../config.ts';
 
 interface AddContentModalProps {
     isOpen: boolean;
